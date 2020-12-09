@@ -2,8 +2,15 @@ const router = require("express").Router();
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 const passport = require("passport");
+const jwt = require("jsonwebtoken");
 
 const User = require("../models/User");
+
+// REST => REpresentational State Transfer
+
+// HTTP é stateless
+
+// RESTful é uma API que segue todas as regras do REST
 
 router.post("/signup", async (req, res) => {
   // 1. Extrair o email, nome e senha do usuario do corpo da requisição
@@ -89,10 +96,34 @@ router.post("/login", (req, res, next) => {
         return next(err);
       }
 
-      const { name, email } = user;
-      return res.status(200).json({ name, email });
+      const { name, email, _id } = user;
+      const userObj = { name, email, _id };
+      const token = jwt.sign({ user: userObj }, process.env.TOKEN_SIGN_SECRET);
+
+      return res.status(200).json({ user: userObj, token });
     });
   })(req, res, next);
 });
+
+router.get(
+  "/profile",
+  passport.authenticate("jwt", { session: false }),
+  async (req, res) => {
+    try {
+      console.log(req.user);
+
+      const result = await User.findOne({ _id: req.user._id }).populate(
+        "books"
+      );
+
+      res
+        .status(200)
+        .json({ message: "This is a protected route", user: result });
+    } catch (err) {
+      console.error(err);
+      return res.status(500).json({ msg: err });
+    }
+  }
+);
 
 module.exports = router;

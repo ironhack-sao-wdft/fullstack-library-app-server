@@ -45,6 +45,24 @@ function configurePassport(app) {
       }
     )
   );
+
+  // Configura o passport para extrair os tokens JWT do cabeçalho das requisições HTTP
+
+  passport.use(
+    new JWTStrategy(
+      {
+        secretOrKey: process.env.TOKEN_SIGN_SECRET,
+        jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
+      },
+      (token, done) => {
+        try {
+          return done(null, token.user);
+        } catch (err) {
+          done(err);
+        }
+      }
+    )
+  );
 }
 
 module.exports = configurePassport;
