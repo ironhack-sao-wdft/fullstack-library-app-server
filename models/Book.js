@@ -11,6 +11,7 @@ const BookSchema = new Schema(
       enum: ["Romance", "Poetry", "Biography", "Horror", "Sci-fi", "Fantasy"],
     },
     publisher: { type: String, required: true },
+    bookCoverImage: String,
     userId: { type: Schema.Types.ObjectId, ref: "User" },
   },
   {
