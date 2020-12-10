@@ -4,12 +4,10 @@ const cors = require("cors");
 const db = require("./config/db.config");
 const passportConfig = require("./config/passport.config");
 
-const PORT = 1234;
-
 const app = express();
 
 app.use(express.json());
-app.use(cors({ origin: "http://localhost:3000" }));
+app.use(cors({ origin: process.env.REACT_APP_URL }));
 
 db();
 passportConfig(app);
@@ -20,4 +18,6 @@ app.use("/api", bookRouter);
 const userRouter = require("./routes/user.routes");
 app.use("/api", userRouter);
 
-app.listen(PORT, () => console.log(`Server up and running at port ${PORT}`));
+app.listen(process.env.PORT, () =>
+  console.log(`Server up and running at port ${process.env.PORT}`)
+);
