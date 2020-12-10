@@ -7,7 +7,7 @@ const passportConfig = require("./config/passport.config");
 const app = express();
 
 app.use(express.json());
-app.use(cors({ origin: "*" }));
+app.use(cors());
 
 db();
 passportConfig(app);
